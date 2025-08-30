@@ -184,3 +184,228 @@ python internet_optimizer.py
 · بعض مشغلي الشبكات قد يتجاوزون إعدادات MTU
 · التغييرات قد تحتاج إعادة تشغيل أحياناً
 · احتفظ بإعداداتك الأصلية للرجوع إليها
+
+
+واجهات الجوال (Mobile Data):
+
+· rmnet0 إلى rmnet7 - واجهات بيانات الجوال (SIM)
+· هذه الواجهات مسؤولة عن اتصال الإنترنت عبر شبكة الجوال
+
+واجهات الواي فاي (WiFi):
+
+· wlan0 - الواجهة الرئيسية للواي فاي
+· swlan0 - واجهة الواي فاي الثانوية أو الخاصة
+
+🎯 نصائح للاستخدام:
+
+لتحسين اتصال الجوال:
+
+```bash
+# تغيير MTU لواجهات rmnet (لتحسين بيانات SIM)
+# اختر واجهة rmnet0 أو rmnet1 (عادةً الرئيسية)
+# القيم المناسبة: 1500, 1492, 1472
+```
+
+لتحسين اتصال الواي فاي:
+
+```bash
+# تغيير MTU لواجهة wlan0
+# القيم المناسبة: 1500, 1492
+```
+
+⚙️ كيفية التحديد:
+
+1. اعرض الواجهات النشطة:
+
+```bash
+# لمعرفة الواجهة المستخدمة حالياً:
+ip route show | grep default
+```
+
+2. اختبر كل واجهة:
+
+```bash
+# اختبر سرعة كل واجهة
+# ركز على الواجهة التي تعطي أفضل أداء
+```
+
+3. غير إعدادات MTU:
+
+```bash
+# مثال لتغيير wlan0:
+ip link set dev wlan0 mtu 1500
+
+# مثال لتغيير rmnet0:
+ip link set dev rmnet0 mtu 1472
+```
+
+---
+
+🇺🇸 In English
+
+📡 Network Interface Types:
+
+Mobile Data Interfaces:
+
+· rmnet0 to rmnet7 - Mobile data interfaces (SIM)
+· These handle internet connection through cellular network
+
+WiFi Interfaces:
+
+· wlan0 - Main WiFi interface
+· swlan0 - Secondary or special WiFi interface
+
+🎯 Usage Tips:
+
+For Mobile Data Optimization:
+
+```bash
+# Change MTU for rmnet interfaces (SIM data)
+# Choose rmnet0 or rmnet1 (usually main)
+# Suitable values: 1500, 1492, 1472
+```
+
+For WiFi Optimization:
+
+```bash
+# Change MTU for wlan0 interface
+# Suitable values: 1500, 1492
+```
+
+⚙️ How to Identify:
+
+1. Show Active Interfaces:
+
+```bash
+# To find currently used interface:
+ip route show | grep default
+```
+
+2. Test Each Interface:
+
+```bash
+# Test speed on each interface
+# Focus on the one with best performance
+```
+
+3. Change MTU Settings:
+
+```bash
+# Example for wlan0:
+ip link set dev wlan0 mtu 1500
+
+# Example for rmnet0:
+ip link set dev rmnet0 mtu 1472
+```
+
+---
+
+🛠️ Practical Commands - أوامر عملية
+
+للعثور على الواجهة النشطة - Find Active Interface:
+
+```bash
+# الطريقة الأسرع:
+ip route get 8.8.8.8 | grep -oP 'dev \K\S+'
+
+# أو:
+netstat -rn | grep '^0.0.0.0' | awk '{print $8}'
+```
+
+لاختبار سرعة واجهة معينة - Test Specific Interface:
+
+```bash
+# لاختبار سرعة rmnet0:
+ping -I rmnet0 8.8.8.8
+
+# لاختبار سرعة wlan0:
+ping -I wlan0 8.8.8.8
+```
+
+لتغيير MTU للواجهات - Change MTU for Interfaces:
+
+```bash
+# لجميع واجهات rmnet (بيانات الجوال):
+for i in {0..7}; do
+    ip link set dev rmnet$i mtu 1472
+done
+
+# للواي فاي:
+ip link set dev wlan0 mtu 1500
+```
+
+---
+
+📊 Recommended MTU Values - قيم MTU الموصى بها
+
+For Mobile Data (rmnet):
+
+· 4G/LTE: 1500 or 1472
+· 3G: 1500 or 1492
+· 2G: 1500
+
+For WiFi (wlan0):
+
+· Most routers: 1500
+· PPPoE: 1492
+· VPN: 1500 or lower
+
+---
+
+🔍 How to Test Which Interface is Active:
+
+Method 1: Check Default Route
+
+```bash
+ip route show default
+```
+
+Method 2: Monitor Traffic
+
+```bash
+# Monitor traffic on rmnet0:
+iftop -i rmnet0
+
+# Monitor traffic on wlan0:
+iftop -i wlan0
+```
+
+Method 3: Check Connection Status
+
+```bash
+# Check if interface has IP address:
+ip addr show rmnet0
+ip addr show wlan0
+```
+
+---
+
+💡 Pro Tips - نصائح احترافية:
+
+1. Focus on Active Interface:
+
+```bash
+# Don't change all interfaces
+# Find which one is actually being used
+# Then optimize only that one
+```
+
+2. Test Before Change:
+
+```bash
+# Test current speed first
+# Change MTU gradually
+# Test after each change
+```
+
+3. Keep Original Settings:
+
+```bash
+# Note original MTU values
+# So you can revert if needed
+# Use: ip link show | grep mtu
+```
+
+Start by identifying which interface is currently active, then optimize its MTU setting for best performance!
+
+ابدأ بتحديد الواجهة النشطة حالياً، ثم قم بتحسين إعدادات MTU للحصول على أفضل أداء!
